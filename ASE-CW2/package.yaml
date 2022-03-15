@@ -46,3 +46,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ASE-CW2
+    - HUnit
