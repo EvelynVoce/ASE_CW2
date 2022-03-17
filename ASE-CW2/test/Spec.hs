@@ -19,4 +19,6 @@ bst_constructor =
 
 lookupTests :: Test
 lookupTests = TestList [
-  TestCase (assertEqual "Lookup Test" (Just "Alex") (bst_lookup 5 bst_constructor))]
+  TestCase (assertEqual "Lookup Test" (Just "Alex") (bst_lookup 5 bst_constructor)),
+  TestCase (assertEqual "Root Node" (Just "Eve") (bst_lookup 20 bst_constructor)),
+  TestCase (assertEqual "Not in Tree" Nothing (bst_lookup 33 bst_constructor))]
