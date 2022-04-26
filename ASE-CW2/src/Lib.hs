@@ -19,8 +19,8 @@ bst_lookup soughtKey (Node key item leftChild rightChild)
   | otherwise = Just item -- If keys match
 
 
-insert :: Int -> String -> BST item -> BST item
--- insert insertKey value Leaf = Node insertKey value Leaf Leaf
+insert :: Int -> item -> BST item -> BST item
+insert insertKey value Leaf = Node insertKey value Leaf Leaf
 insert insertKey value (Node key item leftChild rightChild) 
 	| key == insertKey = Node key value leftChild rightChild
 	| key  < insertKey = Node key value leftChild (insert insertKey value rightChild)
