@@ -26,16 +26,16 @@ insert insertKey value (Node key item leftChild rightChild)
 	| key > insertKey = Node key value (insert insertKey value leftChild) rightChild
 
 
-delete :: int -> item -> BST item -> BST item
-delete Nil value Leaf = Nil
-delete (Node key item leftChild rightChild) delete_key  
+delete :: Int -> BST item -> BST item
+-- delete Nil value Leaf = Nil
+delete delete_key (Node key item leftChild rightChild)  
 	| delete_key == key = delete_node (Node key item leftChild rightChild)
-	| delete_key < key = Node key item (delete leftChild delete_key) rightChild
-	| delete_key > key = Node leftChild key (delete rightChild delete_key)
+	| delete_key < key = Node key item (delete delete_key leftChild) rightChild
+	| delete_key > key = Node key item leftChild (delete delete_key rightChild)
 
 
 delete_node :: BST item -> BST item
-delete_node (Node key item Left Leaf) = Leaf
+delete_node (Node key item Leaf Leaf) = Leaf
 delete_node (Node key item Leaf rightChild) = rightChild
 delete_node (Node key item leftChild Leaf) = leftChild
 delete_node (Node key item leftChild rightChild) = (Node key2 item leftChild rightChild)
@@ -43,6 +43,6 @@ delete_node (Node key item leftChild rightChild) = (Node key2 item leftChild rig
 		key2 = find_minimum_node rightChild
 
 
-find_minimum_node :: int => BST item -> BST item
+find_minimum_node :: BST item -> Int
 find_minimum_node (Node key item Leaf _) = key
 find_minimum_node (Node key item leftChild _) = find_minimum_node leftChild

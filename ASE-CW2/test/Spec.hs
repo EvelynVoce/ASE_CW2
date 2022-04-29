@@ -7,6 +7,7 @@ main :: IO ()
 main = do
   results <- runTestTT lookupTests
   insert_results <- runTestTT insertTests
+  remove_results <- runTestTT removeTests
   return ()
 
 
@@ -14,7 +15,7 @@ main = do
 bst_constructor :: BST String
 bst_constructor =
   Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" Leaf Leaf) (Node 15 "Dom" Leaf Leaf) )
+    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "AlexChild" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 2 "DomChild" Leaf Leaf)) )
     (Node 30 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
   
 
@@ -53,3 +54,20 @@ insertExistingKey :: Test
 insertExistingKey =
   let altered_bst = insert 15 "New Dom" bst_constructor in
   TestCase (assertEqual "Replace existing node" (Just "New Dom") (bst_lookup 15 altered_bst))
+
+
+removeTests :: Test
+removeTests = TestList [
+  remove_no_child,
+  remove_only_left
+  ]
+
+remove_no_child :: Test
+remove_no_child =
+  let altered_bst = delete 15 bst_constructor in
+  TestCase (assertEqual "Remove Node No Children" Nothing (bst_lookup 15 altered_bst))
+
+remove_only_left :: Test
+remove_only_left =
+  let altered_bst = delete 5 bst_constructor in
+  TestCase (assertEqual "Remove Node Only Left Child" (Just "AlexChild") (bst_lookup 2 altered_bst))
