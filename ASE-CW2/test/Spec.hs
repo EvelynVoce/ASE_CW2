@@ -7,6 +7,7 @@ main :: IO ()
 main = do
   results <- runTestTT lookupTests
   insert_results <- runTestTT insertTests
+  insert_results <- runTestTT removeTests
   return ()
 
 
@@ -14,7 +15,7 @@ main = do
 bst_constructor :: BST String
 bst_constructor =
   Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" Leaf Leaf) (Node 15 "Dom" Leaf Leaf) )
+    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
     (Node 30 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
   
 
@@ -53,3 +54,54 @@ insertExistingKey :: Test
 insertExistingKey =
   let altered_bst = insert 15 "New Dom" bst_constructor in
   TestCase (assertEqual "Replace existing node" (Just "New Dom") (bst_lookup 15 altered_bst))
+
+
+
+removeTests :: Test
+removeTests = TestList [
+  removeTest1,
+  removeTest2,
+  removeTest3,
+  removeTest4,
+  removeTest5,
+  removeTest6
+  ]
+
+removeTest1 :: Test
+removeTest1 =
+  let altered_bst = delete 2 bst_constructor in
+  TestCase (assertEqual "Remove node with no children" Nothing (bst_lookup 2 altered_bst))
+
+removeTest2 :: Test
+removeTest2 =
+  let altered_bst = delete 5 bst_constructor in
+  TestCase (assertEqual "Remove node with only left child" (Just "ChildAlex") (bst_lookup 2 altered_bst))
+
+removeTest3 :: Test
+removeTest3 =
+  let altered_bst = delete 15 bst_constructor in
+  TestCase (assertEqual "Remove node with only right child" (Just "ChildDom") (bst_lookup 17 altered_bst))
+
+removeTest4 :: Test
+removeTest4 =
+  let altered_bst = delete 30 bst_constructor in
+  TestCase (assertEqual "Remove node with two children, check node deleteed" Nothing (bst_lookup 30 altered_bst))
+
+removeTest5 :: Test
+removeTest5 =
+  let altered_bst = delete 30 bst_constructor in
+  TestCase (assertEqual "Remove node with two children, check left child" (Just "Neil") (bst_lookup 25 altered_bst))
+
+removeTest6 :: Test
+removeTest6 =
+  let altered_bst = delete 30 bst_constructor in
+  TestCase (assertEqual "Remove node with two children, check right child" (Just "Random Name") (bst_lookup 35 altered_bst))
+
+print_tree :: IO()
+print_tree =
+  inorder_display bst_constructor
+
+
+-- removeIfTest1 :: Test
+-- removeIfTest1 = 
+--   let altered_bst = removeIf 
