@@ -39,8 +39,7 @@ delete_node (Node key item Leaf Leaf) = Leaf
 delete_node (Node key item Leaf rightChild) = rightChild
 delete_node (Node key item leftChild Leaf) = leftChild
 delete_node (Node key item leftChild rightChild) = (Node key2 item2 leftChild (delete key2 rightChild))
-	where 
-		(key2, item2) = find_minimum_node rightChild
+  where (key2, item2) = find_minimum_node rightChild
 
 
 find_minimum_node :: BST item -> (Int, item)
@@ -51,13 +50,13 @@ find_minimum_node (Node key item leftChild _) = find_minimum_node leftChild
 deleteIf :: (Int -> Bool) -> BST item -> BST item
 deleteIf condition Leaf = Leaf
 deleteIf condition (Node key item leftChild rightChild) =
-    if condition key
-      then deleteIf condition (delete key (Node key item leftChild rightChild))
-      else Node key item (deleteIf condition leftChild) (deleteIf condition rightChild)
+  if condition key
+    then deleteIf condition (delete key (Node key item leftChild rightChild))
+    else Node key item (deleteIf condition leftChild) (deleteIf condition rightChild)
 
 
 -- deleteIf :: (Int -> Bool) -> BST item -> BST item
--- deleteIf _ Leaf = Leaf
+-- deleteIf condition Leaf = Leaf
 -- deleteIf condition (Node key item leftChild rightChild) =
 --   deleteIf condition leftChild
 --   if condition key then delete key (Node key item leftChild rightChild)
@@ -70,3 +69,12 @@ inorder_display (Node key item leftChild rightChild) = do
   inorder_display leftChild
   putStrLn (show key ++ " " ++ show item)
   inorder_display rightChild
+
+
+bstToList :: BST item -> [(Int, item)]
+bstToList Leaf = []
+bstToList (Node key value Leaf Leaf) = [(key, value)] 
+bstToList (Node key value leftChild rightChild) = 
+  bstToList leftChild
+  ++ [(key, value)] -- concatenate current node to the existing list
+  ++ bstToList rightChild -- concatenate the right node to the existing list

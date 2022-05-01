@@ -125,6 +125,11 @@ print_tree3 =
   inorder_display altered_bst
 
 
+-- print_tree4 :: IO()
+-- print_tree4 =
+--   bstToList bst_constructor
+
+
 -- removeIfTest1 :: Test
 -- removeIfTest1 = 
 --   let altered_bst = removeIf 
