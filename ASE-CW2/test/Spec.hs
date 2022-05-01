@@ -7,7 +7,8 @@ main :: IO ()
 main = do
   results <- runTestTT lookupTests
   insert_results <- runTestTT insertTests
-  insert_results <- runTestTT removeTests
+  remove_restults <- runTestTT removeTests
+  removeIf_restults <- runTestTT removeIfTests
   return ()
 
 
@@ -16,8 +17,8 @@ bst_constructor :: BST String
 bst_constructor =
   Node 20 "Eve"
     (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 30 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-  
+    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
+
 
 -- bst_constructor2 :: BST String -> String
 -- bst_constructor2 =
@@ -84,22 +85,44 @@ removeTest3 =
 
 removeTest4 :: Test
 removeTest4 =
-  let altered_bst = delete 30 bst_constructor in
-  TestCase (assertEqual "Remove node with two children, check node deleteed" Nothing (bst_lookup 30 altered_bst))
+  let altered_bst = delete 31 bst_constructor in
+  TestCase (assertEqual "Remove node with two children, check node deleted" Nothing (bst_lookup 30 altered_bst))
 
 removeTest5 :: Test
 removeTest5 =
-  let altered_bst = delete 30 bst_constructor in
+  let altered_bst = delete 31 bst_constructor in
   TestCase (assertEqual "Remove node with two children, check left child" (Just "Neil") (bst_lookup 25 altered_bst))
 
 removeTest6 :: Test
 removeTest6 =
-  let altered_bst = delete 30 bst_constructor in
+  let altered_bst = delete 31 bst_constructor in
   TestCase (assertEqual "Remove node with two children, check right child" (Just "Random Name") (bst_lookup 35 altered_bst))
 
 print_tree :: IO()
 print_tree =
   inorder_display bst_constructor
+
+isEven :: Int -> Bool
+isEven n =
+  if n `mod` 2 == 0
+    then True
+    else False
+
+removeIfTests :: Test
+removeIfTests = TestList [
+  TestCase (assertEqual "Begone even scum" (delete 2 (delete 10 (delete 20 bst_constructor))) (deleteIf isEven bst_constructor))
+  ]
+
+print_tree2 :: IO()
+print_tree2 =
+  let altered_bst = deleteIf isEven bst_constructor in
+  inorder_display altered_bst
+
+
+print_tree3 :: IO()
+print_tree3 =
+  let altered_bst = delete 31 bst_constructor in
+  inorder_display altered_bst
 
 
 -- removeIfTest1 :: Test

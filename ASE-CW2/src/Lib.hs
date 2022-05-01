@@ -2,12 +2,12 @@
 {-# HLINT ignore "Use camelCase" #-}
 module Lib where
 import Control.Exception (BlockedIndefinitelyOnMVar)
-   
+
 
 data BST item =
  Node Int item (BST item) (BST item)
   | Leaf
-  deriving (Show) -- Just displays the tree (useful for visual feedback)
+  deriving (Show, Eq) -- Just displays the tree (useful for visual feedback)
 
 
 bst_lookup :: Int -> BST item -> Maybe item
@@ -27,6 +27,7 @@ insert insertKey value (Node key item leftChild rightChild)
 
 
 delete :: Int -> BST item -> BST item
+delete delete_key Leaf = Leaf
 delete delete_key (Node key item leftChild rightChild)  
   | delete_key == key = delete_node (Node key item leftChild rightChild)
   | delete_key < key = Node key item (delete delete_key leftChild) rightChild
@@ -37,14 +38,30 @@ delete_node :: BST item -> BST item
 delete_node (Node key item Leaf Leaf) = Leaf
 delete_node (Node key item Leaf rightChild) = rightChild
 delete_node (Node key item leftChild Leaf) = leftChild
-delete_node (Node key item leftChild rightChild) = (Node key2 item2 leftChild rightChild)
+delete_node (Node key item leftChild rightChild) = (Node key2 item2 leftChild (delete key2 rightChild))
 	where 
 		(key2, item2) = find_minimum_node rightChild
 
 
 find_minimum_node :: BST item -> (Int, item)
-find_minimum_node (Node key item Leaf Leaf) = (key, item)
+find_minimum_node (Node key item Leaf _) = (key, item)
 find_minimum_node (Node key item leftChild _) = find_minimum_node leftChild
+
+
+deleteIf :: (Int -> Bool) -> BST item -> BST item
+deleteIf condition Leaf = Leaf
+deleteIf condition (Node key item leftChild rightChild) =
+    if condition key
+      then deleteIf condition (delete key (Node key item leftChild rightChild))
+      else Node key item (deleteIf condition leftChild) (deleteIf condition rightChild)
+
+
+-- deleteIf :: (Int -> Bool) -> BST item -> BST item
+-- deleteIf _ Leaf = Leaf
+-- deleteIf condition (Node key item leftChild rightChild) =
+--   deleteIf condition leftChild
+--   if condition key then delete key (Node key item leftChild rightChild)
+--   deleteIf condition rightChild
 
 
 inorder_display :: Show item => BST item -> IO()
