@@ -4,13 +4,13 @@ module Lib where
 import Control.Exception (BlockedIndefinitelyOnMVar)
 
 
-data BST item =
- Node Int item (BST item) (BST item)
+data BST key item =
+ Node key item (BST key item) (BST key item)
   | Leaf
   deriving (Show, Eq) -- Just displays the tree (useful for visual feedback)
 
 
-bst_lookup :: Int -> BST item -> Maybe item
+bst_lookup :: (Ord key) => key -> BST key item -> Maybe item
 bst_lookup soughtKey Leaf = Nothing
 bst_lookup soughtKey (Node key item leftChild rightChild)
   | soughtKey > key = bst_lookup soughtKey rightChild
@@ -18,7 +18,7 @@ bst_lookup soughtKey (Node key item leftChild rightChild)
   | otherwise = Just item -- If keys match
 
 
-insert :: Int -> item -> BST item -> BST item
+insert :: (Ord key) => key -> item -> BST key item -> BST key item
 insert insertKey value Leaf = Node insertKey value Leaf Leaf
 insert insertKey value (Node key item leftChild rightChild) 
   | key == insertKey = Node key value leftChild rightChild
@@ -26,7 +26,7 @@ insert insertKey value (Node key item leftChild rightChild)
   | key > insertKey = Node key value (insert insertKey value leftChild) rightChild
 
 
-delete :: Int -> BST item -> BST item
+delete :: (Ord key) => key -> BST key item -> BST key item
 delete delete_key Leaf = Leaf
 delete delete_key (Node key item leftChild rightChild)  
   | delete_key == key = delete_node (Node key item leftChild rightChild)
@@ -34,7 +34,7 @@ delete delete_key (Node key item leftChild rightChild)
   | delete_key > key = Node key item leftChild (delete delete_key rightChild)
 
 
-delete_node :: BST item -> BST item
+delete_node :: (Ord key) => BST key item -> BST key item
 delete_node (Node key item Leaf Leaf) = Leaf
 delete_node (Node key item Leaf rightChild) = rightChild
 delete_node (Node key item leftChild Leaf) = leftChild
@@ -42,12 +42,12 @@ delete_node (Node key item leftChild rightChild) = (Node key2 item2 leftChild (d
   where (key2, item2) = find_minimum_node rightChild
 
 
-find_minimum_node :: BST item -> (Int, item)
+find_minimum_node :: (Ord key) => BST key item -> (key, item)
 find_minimum_node (Node key item Leaf _) = (key, item)
 find_minimum_node (Node key item leftChild _) = find_minimum_node leftChild
 
 
-deleteIf :: (Int -> Bool) -> BST item -> BST item
+deleteIf :: (Ord key) => (key -> Bool) -> BST key item -> BST key item
 deleteIf condition Leaf = Leaf
 deleteIf condition (Node key item leftChild rightChild) =
   if condition key
@@ -55,7 +55,7 @@ deleteIf condition (Node key item leftChild rightChild) =
     else Node key item (deleteIf condition leftChild) (deleteIf condition rightChild)
 
 
--- deleteIf :: (Int -> Bool) -> BST item -> BST item
+-- deleteIf :: (Ord key) => (key -> Bool) -> BST key item -> BST ley item
 -- deleteIf condition Leaf = Leaf
 -- deleteIf condition (Node key item leftChild rightChild) =
 --   deleteIf condition leftChild
@@ -63,7 +63,7 @@ deleteIf condition (Node key item leftChild rightChild) =
 --   deleteIf condition rightChild
 
 
-inorder_display :: Show item => BST item -> IO()
+inorder_display :: (Ord key, Show key, Show item) => BST key item -> IO()
 inorder_display Leaf = return ()
 inorder_display (Node key item leftChild rightChild) = do
   inorder_display leftChild
@@ -71,7 +71,7 @@ inorder_display (Node key item leftChild rightChild) = do
   inorder_display rightChild
 
 
-bstToList :: BST item -> [(Int, item)]
+bstToList :: BST key item -> [(key, item)]
 bstToList Leaf = []
 bstToList (Node key value Leaf Leaf) = [(key, value)] 
 bstToList (Node key value leftChild rightChild) = 
