@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      BST
+      Dictionary
       Lib
   other-modules:
       Paths_ASE_CW2

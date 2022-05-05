@@ -2,6 +2,8 @@
 {-# HLINT ignore "Use camelCase" #-}
 import Test.HUnit
 import Lib
+import Dictionary
+import BST
 
 main :: IO ()
 main = do
