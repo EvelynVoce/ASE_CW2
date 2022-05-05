@@ -24,11 +24,11 @@ bst_lookup soughtKey (Node key item leftChild rightChild)
 
 
 insert :: (Ord key) => key -> item -> BST key item -> BST key item
-insert insertKey value Leaf = Node insertKey value Leaf Leaf
-insert insertKey value (Node key item leftChild rightChild) 
-  | key == insertKey = Node key value leftChild rightChild
-  | key < insertKey = Node key value leftChild (insert insertKey value rightChild)
-  | key > insertKey = Node key value (insert insertKey value leftChild) rightChild
+insert insertKey insertValue Leaf = Node insertKey insertValue Leaf Leaf
+insert insertKey insertValue (Node key value leftChild rightChild) 
+  | key == insertKey = Node key insertValue leftChild rightChild
+  | key < insertKey = Node key value leftChild (insert insertKey insertValue rightChild)
+  | key > insertKey = Node key value (insert insertKey insertValue leftChild) rightChild
 
 
 delete :: (Ord key) => key -> BST key item -> BST key item
