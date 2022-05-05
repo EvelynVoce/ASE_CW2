@@ -4,9 +4,11 @@ import Test.HUnit
 import Lib
 import Dictionary
 import BST
+import Test.QuickCheck
 
 main :: IO ()
 main = do
+  size_results <- runTestTT sizeTests
   lookup_results <- runTestTT lookupTests
   insert_results <- runTestTT insertTests
   remove_restults <- runTestTT removeTests
@@ -108,7 +110,27 @@ removeIfTests = TestList [
   TestCase (assertEqual "Remove Evens" (delete 2 (delete 10 (delete 20 bst_constructor))) (deleteIf isEven bst_constructor)),
   TestCase (assertEqual "Remove Odds" (Node 20 "Eve" (Node 10 "Ryder" (Node 2 "ChildAlex" Leaf Leaf) Leaf) Leaf) (deleteIf isOdd bst_constructor))
   ]
-  
+
+
+sizeTests :: Test
+sizeTests = TestList [
+  TestCase (assertEqual "Remove Evens" 0 (size create_bst)),
+  TestCase (assertEqual "Remove Evens" 9 (size bst_constructor))
+  ]
+
+
+-- Property tests --
+prop_test :: Int -> String -> Bool
+prop_test key item = Just(item) == (bst_lookup key (insert key item bst_constructor))
+
+prop_increases_size_by_one :: Int -> String -> Bool
+prop_increases_size_by_one key item = (size bst_constructor) + 1 == size altered_bst || size(bst_constructor) == size altered_bst
+  where altered_bst = insert key item bst_constructor
+
+prop_decreases_size_by_one :: Int -> String -> Bool
+prop_decreases_size_by_one key item = (size bst_constructor) == size altered_bst || size(bst_constructor) - 1 == size altered_bst
+  where altered_bst = delete key (insert key item bst_constructor)
+
 -- print_tree :: IO()
 -- print_tree =
 --   inorder_display bst_constructor

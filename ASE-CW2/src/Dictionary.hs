@@ -8,6 +8,11 @@ create_bst :: BST key item
 create_bst = Leaf
 
 
+size :: BST key item -> Int
+size Leaf = 0
+size (Node key item leftChild rightChild) = 1 + size leftChild + size rightChild
+
+
 bst_lookup :: (Ord key) => key -> BST key item -> Maybe item
 bst_lookup soughtKey Leaf = Nothing
 bst_lookup soughtKey (Node key item leftChild rightChild)
