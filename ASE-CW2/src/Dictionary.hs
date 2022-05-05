@@ -1,4 +1,4 @@
-module Dictionary (create_dictionary, dict_lookup, dict_insert, remove, removeIf, displayList, dict_inorder_displaydict) where
+module Dictionary (create_dictionary, dict_lookup, dict_insert, remove, removeIf, displayList, dict_inorder_display) where
 import BST
 
 create_dictionary = BST.create_bst

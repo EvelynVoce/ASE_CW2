@@ -31,6 +31,12 @@ odd_bst =
     (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
 
 
+bst_inserted_26 :: BST Int String
+bst_inserted_26 =
+  Node 20 "Eve"
+    (Node 10 "Ryder" (Node 5 "Alex" Leaf Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
+    (Node 31 "Harry" (Node 25 "Neil" Leaf (Node 26 "InsertTest" Leaf Leaf)) (Node 35 "Random Name" Leaf Leaf))
+
 bst_removed_with_no_child :: BST Int String
 bst_removed_with_no_child =
   Node 20 "Eve"
@@ -93,6 +99,7 @@ insertTests = TestList [
   TestCase (assertEqual "New node right sub-tree" (Just "Testing") (bst_lookup 50 (insert 50 "Testing" bst_constructor))),
   TestCase (assertEqual "New node left sub-tree" (Just "SmallestKey") (bst_lookup 3 (insert 3 "SmallestKey" bst_constructor))),
   TestCase (assertEqual "Replace existing node" (Just "New Dom") (bst_lookup 15 (insert 15 "New Dom" bst_constructor))),
+  TestCase (assertEqual "Full Tree Test" bst_inserted_26 (insert 26 "InsertTest" bst_inserted_26)),
   TestCase (assertEqual "Replace existing node String" (Just "New Dom") (bst_lookup "D" (insert "D" "New Dom" bst_constructor2)))
   ]
 
