@@ -13,6 +13,7 @@ main = do
   insert_results <- runTestTT insertTests
   remove_restults <- runTestTT removeTests
   removeIf_restults <- runTestTT removeIfTests
+  bstToList_results <- runTestTT bstToListTests
   return ()
 
 
@@ -105,6 +106,7 @@ removeTests = TestList [
   TestCase (assertEqual "Remove node with two children, polymorphic" bst2_removed_two_children (delete "G" bst_constructor2))
   ]
 
+
 removeIfTests :: Test
 removeIfTests = TestList [
   TestCase (assertEqual "Remove Evens" (delete 2 (delete 10 (delete 20 bst_constructor))) (deleteIf isEven bst_constructor)),
@@ -112,10 +114,21 @@ removeIfTests = TestList [
   ]
 
 
+listed_bst_constructor :: [(Int, String)]
+listed_bst_constructor = [(2,"ChildAlex"),(5,"Alex"),(10,"Ryder"),(15,"Dom"),(17,"ChildDom"),(20,"Eve"),(25,"Neil"),(31,"Harry"),(35,"Random Name")]
+
+
+bstToListTests :: Test
+bstToListTests = TestList [
+  TestCase (assertEqual "List Empty Tree" [] (bstToList (delete 5 (insert 5 "test" create_bst)))),
+  TestCase (assertEqual "List constructor" listed_bst_constructor (bstToList bst_constructor))
+  ]
+
+
 sizeTests :: Test
 sizeTests = TestList [
-  TestCase (assertEqual "Remove Evens" 0 (size create_bst)),
-  TestCase (assertEqual "Remove Evens" 9 (size bst_constructor))
+  TestCase (assertEqual "Size of empty tree" 0 (size create_bst)),
+  TestCase (assertEqual "Size of bst_constructor" 9 (size bst_constructor))
   ]
 
 
