@@ -2,7 +2,6 @@
 {-# HLINT ignore "Use camelCase" #-}
 import Test.HUnit
 import Lib
-import Dictionary
 import BST
 import Test.QuickCheck
 import Data.List(sort)
