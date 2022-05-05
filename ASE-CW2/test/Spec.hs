@@ -140,38 +140,41 @@ sizeTests = TestList [
 
 
 -- Property tests --
-prop_test :: Int -> String -> Bool
-prop_test key item = Just(item) == (bst_lookup key (insert key item bst_constructor))
 
-prop_increases_size_by_one :: Int -> String -> Bool
-prop_increases_size_by_one key item = (size bst_constructor) + 1 == size altered_bst || size(bst_constructor) == size altered_bst
-  where altered_bst = insert key item bst_constructor
+---- Heavily adapted from (Simon Thompson. Haskell: The Craft of Functional Programming. Addison-Wesley, 3rd edition, 2011.) ---  
 
-prop_decreases_size_by_one :: Int -> String -> Bool
-prop_decreases_size_by_one key item = (size bst_constructor) == size altered_bst || size(bst_constructor) - 1 == size altered_bst
-  where altered_bst = delete key (insert key item bst_constructor)
+instance (Arbitrary key, Arbitrary item) => Arbitrary (BST key item) where
+   arbitrary = sized buildTree -- sized makes recurssion terminate
+
+
+buildTree n
+  | n > 0 = 
+    do
+      key <- arbitrary -- arbitrary key
+      item <- arbitrary -- arbitrary item
+      
+      -- Recursively add the next layer of nodes (with decreasing size)
+      leftChild <- buildTree (subExp) 
+      rightChild <- buildTree (subExp)
+    
+      return (Node key item leftChild rightChild)
+  | otherwise = return Leaf -- Bottom of Tree
+  where subExp = div n 2
+
+----------------------------------------------------------------------------------
+
+prop_test :: Int -> String -> BST Int String -> Bool
+prop_test key item tree = Just(item) == (bst_lookup key (insert key item tree))
+
+prop_increases_size_by_one :: Int -> String -> BST Int String -> Bool
+prop_increases_size_by_one key item tree = (size tree) + 1 == size altered_bst || size(tree) == size altered_bst
+  where altered_bst = insert key item tree
+
+prop_decreases_size_by_one :: Int -> String -> BST Int String -> Bool
+prop_decreases_size_by_one key item tree = (size tree) == size altered_bst || size(tree) - 1 == size altered_bst
+  where altered_bst = delete key (insert key item tree)
 
 prop_displays_keys_in_order :: Int -> String -> Bool
 prop_displays_keys_in_order key item = 
   let altered_bst = insert key item bst_constructor in
     get_keys_from_list (bstToList altered_bst) == sort(get_keys_from_list(bstToList altered_bst))
-
-
-
--- print_tree :: IO()
--- print_tree =
---   inorder_display bst_constructor
-
--- print_tree2 :: IO()
--- print_tree2 =
---   let altered_bst = deleteIf isEven bst_constructor in
---   inorder_display altered_bst
-
--- print_tree3 :: IO()
--- print_tree3 =
---   let altered_bst = delete 31 bst_constructor in
---   inorder_display altered_bst
-
--- print_tree4 :: IO()
--- print_tree4 =
---   bstToList bst_constructor
