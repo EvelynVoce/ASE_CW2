@@ -48,3 +48,5 @@ tests:
     - ASE-CW2
     - HUnit
     - QuickCheck
+    - tasty
+    - tasty-quickcheck

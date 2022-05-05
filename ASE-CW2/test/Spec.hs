@@ -5,6 +5,8 @@ import Lib
 import BST
 import Test.QuickCheck
 import Data.List(sort)
+import Test.Tasty
+import Test.Tasty.QuickCheck
 
 main :: IO ()
 main = do
@@ -163,16 +165,29 @@ buildTree n
 
 ----------------------------------------------------------------------------------
 
-prop_test :: Int -> String -> BST Int String -> Bool
-prop_test key item tree = Just(item) == (bst_lookup key (insert key item tree))
+prop_lookup_after_insert :: Int -> String -> BST Int String -> Bool
+prop_lookup_after_insert key item tree = Just(item) == (bst_lookup key (insert key item tree))
+
 
 prop_increases_size_by_one :: Int -> String -> BST Int String -> Bool
-prop_increases_size_by_one key item tree = (size tree) + 1 == size altered_bst || size(tree) == size altered_bst
-  where altered_bst = insert key item tree
+prop_increases_size_by_one key item tree =
+  ((bst_lookup key tree == Nothing) && size tree + 1 == size altered_bst) || ((bst_lookup key tree /= Nothing) && size tree == size altered_bst)
+    where altered_bst = insert key item tree
 
 prop_decreases_size_by_one :: Int -> String -> BST Int String -> Bool
-prop_decreases_size_by_one key item tree = (size tree) == size altered_bst || size(tree) - 1 == size altered_bst
-  where altered_bst = delete key (insert key item tree)
+prop_decreases_size_by_one key item tree =
+  size tree == size altered_bst || size tree - 1 == size altered_bst
+    where altered_bst = delete key (insert key item tree)
+
+increase_decrease_size :: TestTree
+increase_decrease_size = testGroup "increase_decrease_size"
+  [
+    testProperty "increase size by at most one per insert" prop_increases_size_by_one,
+    testProperty "decrease size by at most one per delete" prop_decreases_size_by_one
+  ]
+
+run_group :: IO ()
+run_group = defaultMain increase_decrease_size
 
 prop_displays_keys_in_order :: Int -> String -> Bool
 prop_displays_keys_in_order key item = 
