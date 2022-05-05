@@ -1,5 +1,5 @@
 module BST where
-import Control.Exception (BlockedIndefinitelyOnMVar)
+-- import Control.Exception (BlockedIndefinitelyOnMVar)
 
 data BST key item =
   Node key item (BST key item) (BST key item)
