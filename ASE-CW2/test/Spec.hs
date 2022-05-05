@@ -75,6 +75,7 @@ isOdd n = if n `mod` 2 /= 0 then True else False
 
 lookupTests :: Test
 lookupTests = TestList [
+  TestCase (assertEqual "Insert empty" (Just "First") (bst_lookup 5 (insert 5 "First" create_bst))),
   TestCase (assertEqual "Lookup Test" (Just "Alex") (bst_lookup 5 bst_constructor)),
   TestCase (assertEqual "Root Node" (Just "Eve") (bst_lookup 20 bst_constructor)),
   TestCase (assertEqual "Not in Tree" Nothing (bst_lookup 33 bst_constructor)),

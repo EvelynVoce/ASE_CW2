@@ -3,6 +3,11 @@ module Dictionary where
 import Control.Exception (BlockedIndefinitelyOnMVar)
 import BST
 
+
+create_bst :: BST key item
+create_bst = Leaf
+
+
 bst_lookup :: (Ord key) => key -> BST key item -> Maybe item
 bst_lookup soughtKey Leaf = Nothing
 bst_lookup soughtKey (Node key item leftChild rightChild)
