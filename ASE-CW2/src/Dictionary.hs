@@ -81,3 +81,8 @@ bstToList (Node key value leftChild rightChild) =
   bstToList leftChild
   ++ [(key, value)] -- concatenate current node to the existing list
   ++ bstToList rightChild -- concatenate the right node to the existing list
+
+
+get_keys_from_list :: [(key, item)] -> [key]
+get_keys_from_list list = 
+  map fst list

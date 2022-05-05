@@ -5,6 +5,7 @@ import Lib
 import Dictionary
 import BST
 import Test.QuickCheck
+import Data.List(sort)
 
 main :: IO ()
 main = do
@@ -130,6 +131,13 @@ prop_increases_size_by_one key item = (size bst_constructor) + 1 == size altered
 prop_decreases_size_by_one :: Int -> String -> Bool
 prop_decreases_size_by_one key item = (size bst_constructor) == size altered_bst || size(bst_constructor) - 1 == size altered_bst
   where altered_bst = delete key (insert key item bst_constructor)
+
+prop_displays_keys_in_order :: Int -> String -> Bool
+prop_displays_keys_in_order key item = 
+  let altered_bst = insert key item bst_constructor in
+    get_keys_from_list (bstToList altered_bst) == sort(get_keys_from_list(bstToList altered_bst))
+
+
 
 -- print_tree :: IO()
 -- print_tree =
