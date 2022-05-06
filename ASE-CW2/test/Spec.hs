@@ -86,7 +86,6 @@ isOdd n = if n `mod` 2 /= 0 then True else False
 
 lookupTests :: Test
 lookupTests = TestList [
-  TestCase (assertEqual "Insert empty" (Just "First") (bst_lookup 5 (insert 5 "First" create_bst))),
   TestCase (assertEqual "Lookup Test" (Just "Alex") (bst_lookup 5 bst_constructor)),
   TestCase (assertEqual "Root Node" (Just "Eve") (bst_lookup 20 bst_constructor)),
   TestCase (assertEqual "Not in Tree" Nothing (bst_lookup 33 bst_constructor)),
@@ -101,6 +100,7 @@ insertTests = TestList [
   TestCase (assertEqual "New node right sub-tree" (Just "Testing") (bst_lookup 50 (insert 50 "Testing" bst_constructor))),
   TestCase (assertEqual "New node left sub-tree" (Just "SmallestKey") (bst_lookup 3 (insert 3 "SmallestKey" bst_constructor))),
   TestCase (assertEqual "Replace existing node" (Just "New Dom") (bst_lookup 15 (insert 15 "New Dom" bst_constructor))),
+  TestCase (assertEqual "Insert empty" (Just "First") (bst_lookup 5 (insert 5 "First" create_bst))),
   TestCase (assertEqual "Full Tree Test" bst_inserted_26 (insert 26 "InsertTest" bst_inserted_26)),
   TestCase (assertEqual "Replace existing node String" (Just "New Dom") (bst_lookup "D" (insert "D" "New Dom" bst_constructor2)))
   ]
@@ -112,25 +112,29 @@ removeTests = TestList [
   TestCase (assertEqual "Remove node with only left child" bst_removed_with_left_child (delete 5 bst_constructor)),
   TestCase (assertEqual "Remove node with only right child" bst_removed_with_right_child (delete 15 bst_constructor)),
   TestCase (assertEqual "Remove node with two children" bst_removed_two_children (delete 31 bst_constructor)),
+  TestCase (assertEqual "Remove none existing node" bst_constructor (delete 120 bst_constructor)),
   TestCase (assertEqual "Remove node with two children, polymorphic" bst2_removed_two_children (delete "G" bst_constructor2))
   ]
 
 
 removeIfTests :: Test
 removeIfTests = TestList [
-  TestCase (assertEqual "Remove Evens" (delete 2 (delete 10 (delete 20 bst_constructor))) (deleteIf isEven bst_constructor)),
-  TestCase (assertEqual "Remove Odds" (Node 20 "Eve" (Node 10 "Ryder" (Node 2 "ChildAlex" Leaf Leaf) Leaf) Leaf) (deleteIf isOdd bst_constructor))
+  TestCase (assertEqual "Remove Evens" (delete 2 (delete 10 (delete 20 bst_constructor))) (removeIf isEven bst_constructor)),
+  TestCase (assertEqual "Remove Odds" (Node 20 "Eve" (Node 10 "Ryder" (Node 2 "ChildAlex" Leaf Leaf) Leaf) Leaf) (removeIf isOdd bst_constructor))
   ]
 
 
 listed_bst_constructor :: [(Int, String)]
 listed_bst_constructor = [(2,"ChildAlex"),(5,"Alex"),(10,"Ryder"),(15,"Dom"),(17,"ChildDom"),(20,"Eve"),(25,"Neil"),(31,"Harry"),(35,"Random Name")]
 
+listed_bst_constructor2 :: [(String, String)]
+listed_bst_constructor2 = [("B","Alex"),("C","Ryder"),("D","Dom"),("E","Eve"),("F","Neil"),("G","Harry"),("H","Random Name")]
 
 bstToListTests :: Test
 bstToListTests = TestList [
   TestCase (assertEqual "List Empty Tree" [] (bstToList (delete 5 (insert 5 "test" create_bst)))),
-  TestCase (assertEqual "List constructor" listed_bst_constructor (bstToList bst_constructor))
+  TestCase (assertEqual "List constructor" listed_bst_constructor (bstToList bst_constructor)),
+  TestCase (assertEqual "List constructor polymorphic" listed_bst_constructor2 (bstToList bst_constructor2))
   ]
 
 

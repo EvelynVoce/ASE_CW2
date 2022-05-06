@@ -47,20 +47,20 @@ import Control.Exception (BlockedIndefinitelyOnMVar)
 -- find_minimum_node (Node key item leftChild _) = find_minimum_node leftChild
 
 
--- deleteIf :: (Ord key) => (key -> Bool) -> BST key item -> BST key item
--- deleteIf condition Leaf = Leaf
--- deleteIf condition (Node key item leftChild rightChild) =
+-- removeIf :: (Ord key) => (key -> Bool) -> BST key item -> BST key item
+-- removeIf condition Leaf = Leaf
+-- removeIf condition (Node key item leftChild rightChild) =
 --   if condition key
---     then deleteIf condition (delete key (Node key item leftChild rightChild))
---     else Node key item (deleteIf condition leftChild) (deleteIf condition rightChild)
+--     then removeIf condition (delete key (Node key item leftChild rightChild))
+--     else Node key item (removeIf condition leftChild) (removeIf condition rightChild)
 
 
--- -- deleteIf :: (Ord key) => (key -> Bool) -> BST key item -> BST ley item
--- -- deleteIf condition Leaf = Leaf
--- -- deleteIf condition (Node key item leftChild rightChild) =
--- --   deleteIf condition leftChild
+-- -- removeIf :: (Ord key) => (key -> Bool) -> BST key item -> BST ley item
+-- -- removeIf condition Leaf = Leaf
+-- -- removeIf condition (Node key item leftChild rightChild) =
+-- --   removeIf condition leftChild
 -- --   if condition key then delete key (Node key item leftChild rightChild)
--- --   deleteIf condition rightChild
+-- --   removeIf condition rightChild
 
 
 -- inorder_display :: (Ord key, Show key, Show item) => BST key item -> IO()
