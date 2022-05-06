@@ -76,13 +76,13 @@ inorder_display (Node key item leftChild rightChild) = do
   inorder_display rightChild
 
 
-bstToList :: BST key item -> [(key, item)]
-bstToList Leaf = []
-bstToList (Node key value Leaf Leaf) = [(key, value)] 
-bstToList (Node key value leftChild rightChild) = 
-  bstToList leftChild
+displayList :: BST key item -> [(key, item)]
+displayList Leaf = []
+displayList (Node key value Leaf Leaf) = [(key, value)] 
+displayList (Node key value leftChild rightChild) = 
+  displayList leftChild
   ++ [(key, value)] -- concatenate current node to the existing list
-  ++ bstToList rightChild -- concatenate the right node to the existing list
+  ++ displayList rightChild -- concatenate the right node to the existing list
 
 
 get_keys_from_list :: [(key, item)] -> [key]

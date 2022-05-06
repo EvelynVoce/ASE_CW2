@@ -15,7 +15,7 @@ main = do
   insert_results <- runTestTT insertTests
   remove_restults <- runTestTT removeTests
   removeIf_restults <- runTestTT removeIfTests
-  bstToList_results <- runTestTT bstToListTests
+  displayList_results <- runTestTT displayListTests
   return ()
 
 
@@ -130,13 +130,16 @@ listed_bst_constructor = [(2,"ChildAlex"),(5,"Alex"),(10,"Ryder"),(15,"Dom"),(17
 listed_bst_constructor2 :: [(String, String)]
 listed_bst_constructor2 = [("B","Alex"),("C","Ryder"),("D","Dom"),("E","Eve"),("F","Neil"),("G","Harry"),("H","Random Name")]
 
-bstToListTests :: Test
-bstToListTests = TestList [
-  TestCase (assertEqual "List Empty Tree" [] (bstToList (delete 5 (insert 5 "test" create_bst)))),
-  TestCase (assertEqual "List constructor" listed_bst_constructor (bstToList bst_constructor)),
-  TestCase (assertEqual "List constructor polymorphic" listed_bst_constructor2 (bstToList bst_constructor2))
-  ]
+bst_empty :: BST Int String
+bst_empty = Leaf
 
+displayListTests :: Test
+displayListTests = TestList [
+  TestCase (assertEqual "List Empty Tree" [] (displayList bst_empty)),
+  TestCase (assertEqual "List tree with single node" [(5, "single_node")] (displayList (insert 5 "single_node" create_bst))),
+  TestCase (assertEqual "List constructor" listed_bst_constructor (displayList bst_constructor)),
+  TestCase (assertEqual "List constructor polymorphic" listed_bst_constructor2 (displayList bst_constructor2))
+  ]
 
 sizeTests :: Test
 sizeTests = TestList [
@@ -196,4 +199,4 @@ run_group = defaultMain increase_decrease_size
 prop_displays_keys_in_order :: Int -> String -> Bool
 prop_displays_keys_in_order key item = 
   let altered_bst = insert key item bst_constructor in
-    get_keys_from_list (bstToList altered_bst) == sort(get_keys_from_list(bstToList altered_bst))
+    get_keys_from_list (displayList altered_bst) == sort(get_keys_from_list(displayList altered_bst))
