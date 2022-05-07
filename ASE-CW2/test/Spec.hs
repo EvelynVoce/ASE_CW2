@@ -7,6 +7,8 @@ import Test.QuickCheck
 import Data.List(sort)
 import Test.Tasty
 import Test.Tasty.QuickCheck
+import Dictionary
+import Test_bsts
 
 main :: IO ()
 main = do
@@ -17,64 +19,6 @@ main = do
   removeIf_restults <- runTestTT removeIfTests
   displayList_results <- runTestTT displayListTests
   return ()
-
-
-bst_constructor :: BST Int String
-bst_constructor =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-
-
-odd_bst :: BST Int String
-odd_bst =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-
-
-bst_inserted_26 :: BST Int String
-bst_inserted_26 =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" Leaf Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf (Node 26 "InsertTest" Leaf Leaf)) (Node 35 "Random Name" Leaf Leaf))
-
-bst_removed_with_no_child :: BST Int String
-bst_removed_with_no_child =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" Leaf Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-
-bst_removed_with_left_child :: BST Int String
-bst_removed_with_left_child =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 2 "ChildAlex" Leaf Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-
-bst_removed_with_right_child :: BST Int String
-bst_removed_with_right_child =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 17 "ChildDom" Leaf Leaf) )
-    (Node 31 "Harry" (Node 25 "Neil" Leaf Leaf) (Node 35 "Random Name" Leaf Leaf))
-
-bst_removed_two_children :: BST Int String
-bst_removed_two_children =
-  Node 20 "Eve"
-    (Node 10 "Ryder" (Node 5 "Alex" (Node 2 "ChildAlex" Leaf Leaf) Leaf) (Node 15 "Dom" Leaf (Node 17 "ChildDom" Leaf Leaf)) )
-    (Node 35 "Random Name" (Node 25 "Neil" Leaf Leaf) Leaf)
-
-
-bst_constructor2 :: BST String String
-bst_constructor2 =
-  Node "E" "Eve"
-    (Node "C" "Ryder" (Node "B" "Alex" Leaf Leaf) (Node "D" "Dom" Leaf Leaf) )
-    (Node "G" "Harry" (Node "F" "Neil" Leaf Leaf) (Node "H" "Random Name" Leaf Leaf))
-
-bst2_removed_two_children :: BST String String
-bst2_removed_two_children =
-  Node "E" "Eve"
-    (Node "C" "Ryder" (Node "B" "Alex" Leaf Leaf) (Node "D" "Dom" Leaf Leaf) )
-    (Node "H" "Random Name" (Node "F" "Neil" Leaf Leaf) Leaf)
 
 
 isEven :: Int -> Bool
@@ -108,30 +52,21 @@ insertTests = TestList [
 
 removeTests :: Test
 removeTests = TestList [
-  TestCase (assertEqual "Remove node with no children" bst_removed_with_no_child (delete 2 bst_constructor)),
-  TestCase (assertEqual "Remove node with only left child" bst_removed_with_left_child (delete 5 bst_constructor)),
-  TestCase (assertEqual "Remove node with only right child" bst_removed_with_right_child (delete 15 bst_constructor)),
-  TestCase (assertEqual "Remove node with two children" bst_removed_two_children (delete 31 bst_constructor)),
-  TestCase (assertEqual "Remove none existing node" bst_constructor (delete 120 bst_constructor)),
-  TestCase (assertEqual "Remove node with two children, polymorphic" bst2_removed_two_children (delete "G" bst_constructor2))
+  TestCase (assertEqual "Remove node with no children" bst_removed_with_no_child (remove 2 bst_constructor)),
+  TestCase (assertEqual "Remove node with only left child" bst_removed_with_left_child (remove 5 bst_constructor)),
+  TestCase (assertEqual "Remove node with only right child" bst_removed_with_right_child (remove 15 bst_constructor)),
+  TestCase (assertEqual "Remove node with two children" bst_removed_two_children (remove 31 bst_constructor)),
+  TestCase (assertEqual "Remove none existing node" bst_constructor (remove 120 bst_constructor)),
+  TestCase (assertEqual "Remove node with two children, polymorphic" bst2_removed_two_children (remove "G" bst_constructor2))
   ]
 
 
 removeIfTests :: Test
 removeIfTests = TestList [
-  TestCase (assertEqual "Remove Evens" (delete 2 (delete 10 (delete 20 bst_constructor))) (removeIf isEven bst_constructor)),
+  TestCase (assertEqual "Given Leaf returns Leaf" Leaf (removeIf isEven bst_empty)),
+  TestCase (assertEqual "Remove Evens" (remove 2 (remove 10 (remove 20 bst_constructor))) (removeIf isEven bst_constructor)),
   TestCase (assertEqual "Remove Odds" (Node 20 "Eve" (Node 10 "Ryder" (Node 2 "ChildAlex" Leaf Leaf) Leaf) Leaf) (removeIf isOdd bst_constructor))
   ]
-
-
-listed_bst_constructor :: [(Int, String)]
-listed_bst_constructor = [(2,"ChildAlex"),(5,"Alex"),(10,"Ryder"),(15,"Dom"),(17,"ChildDom"),(20,"Eve"),(25,"Neil"),(31,"Harry"),(35,"Random Name")]
-
-listed_bst_constructor2 :: [(String, String)]
-listed_bst_constructor2 = [("B","Alex"),("C","Ryder"),("D","Dom"),("E","Eve"),("F","Neil"),("G","Harry"),("H","Random Name")]
-
-bst_empty :: BST Int String
-bst_empty = Leaf
 
 displayListTests :: Test
 displayListTests = TestList [
@@ -145,6 +80,23 @@ sizeTests :: Test
 sizeTests = TestList [
   TestCase (assertEqual "Size of empty tree" 0 (size create_bst)),
   TestCase (assertEqual "Size of bst_constructor" 9 (size bst_constructor))
+  ]
+
+
+-- Dictionary tests --
+
+run_dict_tests :: IO ()
+run_dict_tests = do
+  dictionary_results <- runTestTT dictionaryTests
+  return ()
+
+dictionaryTests :: Test
+dictionaryTests = TestList [
+  TestCase (assertEqual "Dictionary lookup Test" (Just "Alex") (Dictionary.dict_lookup 5 bst_constructor)),
+  TestCase (assertEqual "Dictionary replace existing node" (Just "New Dom") (Dictionary.dict_lookup 15 (insert 15 "New Dom" bst_constructor))),
+  TestCase (assertEqual "Dictionary remove node with two children" bst_removed_two_children (Dictionary.dict_remove 31 bst_constructor)),
+  TestCase (assertEqual "Dictionary remove Evens" (remove 2 (remove 10 (remove 20 bst_constructor))) (Dictionary.dict_removeIf isEven bst_constructor)),
+  TestCase (assertEqual "Dictionary list constructor polymorphic" listed_bst_constructor2 (Dictionary.dict_display_list bst_constructor2))
   ]
 
 
@@ -184,13 +136,13 @@ prop_increases_size_by_one key item tree =
 prop_decreases_size_by_one :: Int -> String -> BST Int String -> Bool
 prop_decreases_size_by_one key item tree =
   size tree == size altered_bst || size tree - 1 == size altered_bst
-    where altered_bst = delete key (insert key item tree)
+    where altered_bst = remove key (insert key item tree)
 
 increase_decrease_size :: TestTree
 increase_decrease_size = testGroup "increase_decrease_size"
   [
     testProperty "increase size by at most one per insert" prop_increases_size_by_one,
-    testProperty "decrease size by at most one per delete" prop_decreases_size_by_one
+    testProperty "decrease size by at most one per removal" prop_decreases_size_by_one
   ]
 
 run_group :: IO ()
